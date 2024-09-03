@@ -17,11 +17,29 @@ const fetchQRCode = async (empid) => {
     return null;
   }
 };
+function isChromeBrowser() {
+  const userAgent = navigator.userAgent.toLowerCase();
+  return (
+    userAgent.includes("chrome") &&
+    !userAgent.includes("edge") &&
+    !userAgent.includes("opr")
+  );
+}
 const Direct = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
+      const value = await fetchQRCode(empid);
+      window.onload = function () {
+        if (!isChromeBrowser()) {
+          navigate("/finalpage", {
+            state: {
+              msg: "This website is only accessible through Google Chrome.",
+            },
+          });
+        }
+      };
       const url = window.location.href;
       console.log(url);
       let lastQuesMarkIndex = await url.lastIndexOf("?");
@@ -36,11 +54,9 @@ const Direct = () => {
           state: { msg: "Invalid scan... scan again." },
         });
       }
-
       console.log(empid, key);
-      const value = await fetchQRCode(empid);
-
       if (key === value) {
+
         navigate("/validate", {
           state: { empid: empid},
         });

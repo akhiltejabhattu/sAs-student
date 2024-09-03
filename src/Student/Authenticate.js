@@ -72,24 +72,24 @@ const homConrners = [
     long: 78.430834,
   },
 ];
-// const rectCorners = [
-//   {
-//     lat: 17.538631,
-//     long: 78.384614,
-//   }, // Corner 1
-//   {
-//     lat: 17.538448,
-//     long: 78.385302,
-//   }, // Corner 2
-//   {
-//     lat: 17.537744,
-//     long: 78.385151,
-//   }, // Corner 3
-//   {
-//     lat: 17.537908,
-//     long: 78.384369,
-//   }, // Corner 4
-// ];
+const rectCorners = [
+  {
+    lat: 17.542113,
+    long: 78.38492,
+  }, // Corner 1
+  {
+    lat: 17.541704,
+    long: 78.387632,
+  }, // Corner 2
+  {
+    lat: 17.539669,
+    long: 78.387584,
+  }, // Corner 3
+  {
+    lat: 17.539914,
+    long: 78.383775,
+  }, // Corner 4
+];
 async function getLocationAsync() {
   return new Promise((resolve, reject) => {
     if (navigator.geolocation) {
@@ -119,7 +119,7 @@ async function showPositionAsync() {
 async function f() {
   const pointToCheck = await showPositionAsync();
   console.log(pointToCheck);
-  const isInside = await isPointInsideRectangle(pointToCheck, homConrners);
+  const isInside = await isPointInsideRectangle(pointToCheck, rectCorners);
   // document.write(`Is the point inside the rectangle? ${isInside}`);
   console.log(isInside);
   return isInside;
