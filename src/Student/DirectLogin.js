@@ -3,6 +3,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import "./style.css"; // Make sure to import your CSS file
+import {
+  arrayUnion,
+  doc,
+  updateDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 
 // Firebase config
 const firebaseConfig = {
@@ -55,8 +61,21 @@ const DirectLogin = () => {
       if (isValid) {
         setErrorMessage("");
         console.log("Student login successful!");
-        navigate("/validate", { state: { rollno:rollno, empid:location.state?.empid} });
-      } else {
+        const empid = location.state?.empid;
+        console.log(empid);
+        const facultyDocRef = doc(db, "attendance", empid);
+        console.log(facultyDocRef);
+        
+        await updateDoc(facultyDocRef, {
+          students: arrayUnion(rollno),
+        });
+        localStorage.setItem("rollNo", rollno);
+        console.log("Attendance marked successfully!");
+        navigate("/finalpage", {
+          state: { msg: "Attendance marked successfully for " + rollno },
+        });
+        // navigate("/validate", { state: { rollno:rollno, empid:location.state?.empid} });
+      } else {  
         setErrorMessage("Invalid login credentials");
       }
     } catch (error) {

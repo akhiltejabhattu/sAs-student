@@ -30,16 +30,6 @@ const Direct = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const value = await fetchQRCode(empid);
-      window.onload = function () {
-        if (!isChromeBrowser()) {
-          navigate("/finalpage", {
-            state: {
-              msg: "This website is only accessible through Google Chrome.",
-            },
-          });
-        }
-      };
       const url = window.location.href;
       console.log(url);
       let lastQuesMarkIndex = await url.lastIndexOf("?");
@@ -54,6 +44,17 @@ const Direct = () => {
           state: { msg: "Invalid scan... scan again." },
         });
       }
+      const value = await fetchQRCode(empid);
+      window.onload = function () {
+        if (!isChromeBrowser()) {
+          navigate("/finalpage", {
+            state: {
+              msg: "This website is only accessible through Google Chrome.",
+            },
+          });
+        }
+      };
+      
       console.log(empid, key);
       if (key === value) {
 

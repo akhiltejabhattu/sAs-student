@@ -1,4 +1,4 @@
-import { useNavigate, useState, useLocation} from "react-router-dom";
+import { useNavigate, useState, useLocation } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
@@ -26,6 +26,12 @@ function isPointInsideRectangle(point, rectCorners) {
     (d1 <= 0 && d2 <= 0 && d3 <= 0 && d4 <= 0)
   );
 }
+const clgCorners = [
+  { lat: 17.541991, long: 78.385425 },
+  { lat: 17.54171, long: 78.387015 },
+  { lat: 17.53627, long: 78.385668 },
+  { lat: 17.536861, long: 78.38342 },
+];
 const rectCorners = [
   {
     lat: 17.542113,
@@ -72,48 +78,47 @@ async function showPositionAsync() {
 async function f() {
   const pointToCheck = await showPositionAsync();
   console.log(pointToCheck);
-  const isInside = await isPointInsideRectangle(pointToCheck, rectCorners);
+  const isInside = await isPointInsideRectangle(pointToCheck, clgCorners);
   // document.write(`Is the point inside the rectangle? ${isInside}`);
   console.log(isInside);
   return isInside;
 }
 const Validate = () => {
-    const navigate = useNavigate();
-    const location=useLocation();
-    const empid = location.state?.empid;
-    const rollno=location.state?.rollno;
-    if(rollno){
-        localStorage.setItem("rollNo",rollno)
-    }
+  const navigate = useNavigate();
+  const location = useLocation();
+  const empid = location.state?.empid;
+  const rollno = location.state?.rollno;
+  if (rollno) {
+    localStorage.setItem("rollNo", rollno);
+  }
 
-    useEffect(() => {
-      const fetchData = async () => {
-          const rollNo = localStorage.getItem("rollNo");
-          console.log("rollNo:"+rollNo);
-          if(await f()){
-          if (!rollNo) {
-            console.log("login navigation");
-            navigate("/login", { state: { empid: empid } });
-          } else {
-            const facultyDocRef = doc(db, "attendance", empid);
-            await updateDoc(facultyDocRef, {
-              students: arrayUnion(rollNo),
-            });
-            console.log("Attendance marked successfully!");
-            navigate("/finalpage", {
-              state: { msg: "Attendance marked successfully for " + rollNo },
-            });
-          }
-        } 
-        else{
+  useEffect(() => {
+    const fetchData = async () => {
+      const rollNo = localStorage.getItem("rollNo");
+      console.log("rollNo:" + rollNo);
+      if (await f()) {
+        if (!rollNo) {
+          console.log("login navigation");
+          navigate("/login", { state: { empid: empid } });
+        } else {
+          const facultyDocRef = doc(db, "attendance", empid);
+          await updateDoc(facultyDocRef, {
+            students: arrayUnion(rollNo),
+          });
+          console.log("Attendance marked successfully!");
           navigate("/finalpage", {
-            state: { msg: "You are not in class.. " },
+            state: { msg: "Attendance marked successfully for " + rollNo },
           });
         }
+      } else {
+        navigate("/finalpage", {
+          state: { msg: "You are not in class.. " },
+        });
       }
-      fetchData();
-    }, [navigate]);
-    return (
+    };
+    fetchData();
+  }, [navigate]);
+  return (
     <div
       style={{
         display: "flex",
@@ -130,3 +135,5 @@ const Validate = () => {
 };
 
 export default Validate;
+
+
